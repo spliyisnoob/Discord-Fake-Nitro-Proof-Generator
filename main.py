@@ -1,3 +1,9 @@
+# instead of using people's username, it uses nickname and the msg time is random
+# (to edit the time:
+# lines:
+# 36
+# 28 )
+
 import discord
 from discord import app_commands
 from discord.ui import View, Select
@@ -17,13 +23,17 @@ class BoostPage:
         self.authorname = authorname
         self.authoravatar = authoravatar
         self.authortext = authortext
-        self.sender_message_datetime = self.actual_datetime - datetime.timedelta(minutes=random.randint(0, 2))
+
+        
+        self.sender_message_datetime = self.actual_datetime - datetime.timedelta(minutes=random.randint(1, 300))  # 1 to 300 minutes ahead
         self.sender_message_datetime = self.sender_message_datetime.strftime('Today at %I:%M %p')
 
         self.receivername = receivername
         self.receiveravatar = receiveravatar
         self.receivertext = receivertext
-        self.receiver_message_datetime = self.actual_datetime + datetime.timedelta(minutes=random.randint(0, 2))
+
+        
+        self.receiver_message_datetime = self.actual_datetime + datetime.timedelta(minutes=random.randint(1, 120))  # 1 to 120 minutes late
         self.receiver_message_datetime = self.receiver_message_datetime.strftime('Today at %I:%M %p')
     
     def get_proof(self):
@@ -131,7 +141,7 @@ class NitroProofCustom(discord.ui.Modal, title='Fake Nitro Proof System'):
             self.receiveravatar_value = config["default_avatar"]
         else:
             self.receiveravatar_value = self.receiveravatar.value
-        proof = BoostPage(self.nitrotype.value, interaction.user.name, interaction.user.avatar.url, self.authortext.value, self.receiveravatar_value, self.receivername.value, self.receivertext.value).get_proof()
+        proof = BoostPage(self.nitrotype.value, interaction.user.display_name, interaction.user.avatar.url, self.authortext.value, self.receiveravatar_value, self.receivername.value, self.receivertext.value).get_proof()
         image = hti.screenshot(html_str=proof, size=(random.randint(730, 1000), random.randint(320, 340)), save_as='proof.png')
         
         await interaction.followup.send(f"Proof generated! Check your DMs.", ephemeral=True)
@@ -179,7 +189,7 @@ class NitroProofId(discord.ui.Modal, title='Fake Nitro Proof System'):
             self.user = await client.fetch_user(int(self.receiverid.value))
             self.author_avatar = interaction.user.display_avatar.url if interaction.user.avatar else config["default_avatar"]
             self.receiver_avatar = self.user.display_avatar.url if self.user.avatar else config["default_avatar"]
-            proof = BoostPage(self.nitrotype.value, interaction.user.name, self.author_avatar, self.authortext.value, self.receiver_avatar, self.user.name, self.receivertext.value).get_proof()
+            proof = BoostPage(self.nitrotype.value, interaction.user.display_name, self.author_avatar, self.authortext.value, self.receiver_avatar, self.user.display_name, self.receivertext.value).get_proof()
             image = hti.screenshot(html_str=proof, size=(random.randint(730, 1000), random.randint(320, 340)), save_as='proof.png')
             
             await interaction.followup.send(f"Proof generated! Check your DMs.", ephemeral=True)
